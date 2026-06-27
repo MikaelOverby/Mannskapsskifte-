@@ -73,7 +73,10 @@ function acFilter(inputId,dropId){
   var val=document.getElementById(inputId).value.trim().toLowerCase();
   var dd=document.getElementById(dropId);
   if(!val||empList.length===0){dd.classList.remove('open');return;}
-  var hits=empList.filter(function(e){return e.text.toLowerCase().indexOf(val)!==-1;}).slice(0,10);
+  var hits=empList.filter(function(e){
+    var t=(e.text||e.Text||'').toLowerCase();
+    return t.indexOf(val)!==-1;
+  }).slice(0,10);
   if(!hits.length){dd.classList.remove('open');return;}
   dd.innerHTML=hits.map(function(e){
     var hi=e.text.replace(new RegExp('('+val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<strong>$1</strong>');
@@ -514,6 +517,8 @@ function autoLoadEmployees(){
 }
 
 function showEmpLoaded(count){
+  // Normalize empList to always use lowercase keys
+  empList=empList.map(function(e){return {text:e.text||e.Text||'',guid:e.guid||e.Value||''};});
   var s=document.getElementById('ac-status');
   var l=document.getElementById('ac-loaded');
   var c=document.getElementById('ac-count');
